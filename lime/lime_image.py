@@ -262,7 +262,7 @@ class LimeImageExplainer(object):
                 q = self.random_state.uniform(0, 1)
                 data[i,:] = self.random_state.rand(n_features) < q
                 correction_weights[i] = (binom(n_features, np.sum(data[i,:])) 
-                                            / (2 ** n_features))
+                                            / (2 ** n_features) * (n_features + 1))
         else:
             data = self.random_state.randint(0, 2, num_samples * n_features)\
                 .reshape((num_samples, n_features))
