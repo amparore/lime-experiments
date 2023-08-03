@@ -256,8 +256,8 @@ class LimeImageExplainer(object):
         """
         n_features = np.unique(segments).shape[0]
         if use_stratification:
-            data = np.zeros([num_samples, n_features], dtype=bool)
-            correction_weights = np.zeros(num_samples)
+            data = np.ones([num_samples, n_features], dtype=bool)
+            correction_weights = np.ones(num_samples)
             for i in range(1, num_samples):
                 q = self.random_state.uniform(0, 1)
                 data[i,:] = self.random_state.rand(n_features) < q
@@ -266,11 +266,9 @@ class LimeImageExplainer(object):
         else:
             data = self.random_state.randint(0, 2, num_samples * n_features)\
                 .reshape((num_samples, n_features))
+            data[0, :] = 1
             correction_weights = None
         labels = []
-        data[0, :] = 1
-        if correction_weights is not None: 
-            correction_weights[0] = 1.0
         imgs = []
         rows = tqdm(data) if progress_bar else data
         for row in rows:
