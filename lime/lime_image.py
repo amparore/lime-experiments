@@ -1,7 +1,7 @@
 """
 Functions for explaining classifiers that use Image data.
 """
-import copy
+import copy, math
 from functools import partial
 
 import numpy as np
@@ -199,7 +199,7 @@ class LimeImageExplainer(object):
 
         top = labels
 
-        data, labels, correction_weights = self.data_labels(image, fudged_image, segments,
+        data, labels, weight_adjustments = self.data_labels(image, fudged_image, segments,
                                                             classifier_fn, num_samples,
                                                             batch_size=batch_size,
                                                             use_stratification=use_stratification,
@@ -223,7 +223,7 @@ class LimeImageExplainer(object):
              ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
                 data, labels, distances, label, num_features,
                 model_regressor=model_regressor,
-                correction_weights=correction_weights,
+                weight_adjustments=weight_adjustments,
                 feature_selection=self.feature_selection)
         return ret_exp
 
@@ -257,17 +257,18 @@ class LimeImageExplainer(object):
         n_features = np.unique(segments).shape[0]
         if use_stratification:
             data = np.ones([num_samples, n_features], dtype=bool)
-            correction_weights = np.ones(num_samples)
+            weight_adjustments = np.zeros(num_samples)
             for i in range(1, num_samples):
                 q = self.random_state.uniform(0, 1)
                 data[i,:] = self.random_state.rand(n_features) < q
-                correction_weights[i] = (binom(n_features, np.sum(data[i,:])) 
-                                            / (2 ** n_features) * (n_features + 1))
+                weight_adjustments[i] = (binom(n_features, np.sum(data[i,:])) 
+                                         / (2 ** n_features)) * (n_features + 1)
+            weight_adjustments[0] = 1
         else:
             data = self.random_state.randint(0, 2, num_samples * n_features)\
                 .reshape((num_samples, n_features))
             data[0, :] = 1
-            correction_weights = None
+            weight_adjustments = None
         labels = []
         imgs = []
         rows = tqdm(data) if progress_bar else data
@@ -286,4 +287,4 @@ class LimeImageExplainer(object):
         if len(imgs) > 0:
             preds = classifier_fn(np.array(imgs))
             labels.extend(preds)
-        return data, np.array(labels), correction_weights
+        return data, np.array(labels), weight_adjustments
