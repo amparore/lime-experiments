@@ -7,8 +7,8 @@ The class `LimeImageExplainer` adds a single parameter `use_stratification` to t
 # Code example
 lime_explainer = LimeImageExplainer()
 explanation = lime_explainer.explain_instance(image_to_explain, blackbox_model,
-											  ...
-											  use_stratification=True)
+                                              ...
+                                              use_stratification=True)
 ```
 
 The remaining part of this readme is the original redme file of LIME.
