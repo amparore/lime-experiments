@@ -257,7 +257,7 @@ class LimeImageExplainer(object):
         n_features = np.unique(segments).shape[0]
         if use_stratification:
             data = np.ones([num_samples, n_features], dtype=bool)
-            weight_adjustments = np.zeros(num_samples)
+            weight_adjustments = np.zeros(num_samples, dtype=np.float64)
             for i in range(1, num_samples):
                 q = self.random_state.uniform(0, 1)
                 data[i,:] = self.random_state.rand(n_features) < q
