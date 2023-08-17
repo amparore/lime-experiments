@@ -1,4 +1,5 @@
-# stratified-lime
+<!--
+# experiments with lime
 
 This repository contains the changes needed to add the stratified sampling strategy to the original codebase of LIME.
 The class `LimeImageExplainer` adds a single parameter `use_stratification` to the `explain_instance` method. When the parameter is False, the code behaves exactly like the original LIME implementation. When `use_stratification=True` the algorithm *StratifiedSampling* is used, as described in the paper.
@@ -12,8 +13,8 @@ explanation = lime_explainer.explain_instance(image_to_explain, blackbox_model,
 ```
 
 The remaining part of this readme is the original redme file of LIME.
-
 ---
+-->
 
 # lime
 
